@@ -13150,13 +13150,15 @@ module.exports = Main;
 
 var React = __webpack_require__(4);
 var NotesList = __webpack_require__(112);
+var AddNote = __webpack_require__(218);
 
 var Notes = React.createClass({
     displayName: 'Notes',
 
     propTypes: {
         username: React.PropTypes.string.isRequired,
-        notes: React.PropTypes.array.isRequired
+        notes: React.PropTypes.array.isRequired,
+        addNote: React.PropTypes.func.isRequired
     },
     render: function render() {
         return React.createElement(
@@ -13168,6 +13170,7 @@ var Notes = React.createClass({
                 'Notes for ',
                 this.props.username
             ),
+            React.createElement(AddNote, { username: this.props.username, addNote: this.props.addNote }),
             React.createElement(NotesList, { notes: this.props.notes })
         );
     }
@@ -13243,6 +13246,11 @@ var Profile = React.createClass({
     componentWillUnmount: function componentWillUnmount() {
         this.unbind('notes');
     },
+    handleAddNote: function handleAddNote(newNote) {
+        // update firebase with the newNote
+        // append the newNote to the end of firebase
+        this.ref.child(this.props.params.username).child(this.state.notes.length).set(newNote);
+    },
     render: function render() {
         return React.createElement(
             'div',
@@ -13260,7 +13268,10 @@ var Profile = React.createClass({
             React.createElement(
                 'div',
                 { className: 'col-md-4' },
-                React.createElement(Notes, { username: this.props.params.username, notes: this.state.notes })
+                React.createElement(Notes, {
+                    username: this.props.params.username,
+                    notes: this.state.notes,
+                    addNote: this.handleAddNote })
             )
         );
     }
@@ -25533,6 +25544,51 @@ React.createElement(
     null,
     routes
 ), document.getElementById('app'));
+
+/***/ }),
+/* 218 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var React = __webpack_require__(4);
+
+var AddNote = React.createClass({
+    displayName: 'AddNote',
+
+    propTypes: {
+        username: React.PropTypes.string.isRequired,
+        addNote: React.PropTypes.func.isRequired
+    },
+    setRef: function setRef(ref) {
+        this.note = ref;
+    },
+    handleSubmit: function handleSubmit() {
+        var newNote = this.note.value;
+        this.note.value = '';
+        this.props.addNote(newNote);
+    },
+    render: function render() {
+        // ref is like a name tag you give it to an input field so you can access to that value
+        return React.createElement(
+            'div',
+            { className: 'input-group' },
+            React.createElement('input', { type: 'text', className: 'form-control', placeholder: 'Add new note', ref: this.setRef }),
+            React.createElement(
+                'span',
+                { className: 'input-group-btn' },
+                React.createElement(
+                    'button',
+                    { className: 'btn btn-default', type: 'button', onClick: this.handleSubmit },
+                    ' Submit '
+                )
+            )
+        );
+    }
+});
+
+module.exports = AddNote;
 
 /***/ })
 /******/ ]);
