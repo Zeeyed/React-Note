@@ -14136,79 +14136,78 @@ module.exports = Repos;
 var React = __webpack_require__(4);
 
 var UserProfile = React.createClass({
-    displayName: 'UserProfile',
+    displayName: "UserProfile",
 
     propTypes: {
         username: React.PropTypes.string.isRequired,
         bio: React.PropTypes.object.isRequired
     },
     render: function render() {
-        console.log('BIO', this.props.bio);
         return React.createElement(
-            'div',
+            "div",
             null,
             this.props.bio.avatar_url && React.createElement(
-                'li',
-                { className: 'list-group-item' },
-                ' ',
-                React.createElement('img', { src: this.props.bio.avatar_url, className: 'img-rounded img-responsive' })
+                "li",
+                { className: "list-group-item" },
+                " ",
+                React.createElement("img", { src: this.props.bio.avatar_url, className: "img-rounded img-responsive" })
             ),
             this.props.bio.name && React.createElement(
-                'li',
-                { className: 'list-group-item' },
-                'Name: ',
+                "li",
+                { className: "list-group-item" },
+                "Name: ",
                 this.props.bio.name
             ),
             this.props.bio.login && React.createElement(
-                'li',
-                { className: 'list-group-item' },
-                'Username: ',
+                "li",
+                { className: "list-group-item" },
+                "Username: ",
                 this.props.bio.login
             ),
             this.props.bio.email && React.createElement(
-                'li',
-                { className: 'list-group-item' },
-                'Email: ',
+                "li",
+                { className: "list-group-item" },
+                "Email: ",
                 this.props.bio.email
             ),
             this.props.bio.location && React.createElement(
-                'li',
-                { className: 'list-group-item' },
-                'Location: ',
+                "li",
+                { className: "list-group-item" },
+                "Location: ",
                 this.props.bio.location
             ),
             this.props.bio.company && React.createElement(
-                'li',
-                { className: 'list-group-item' },
-                'Company: ',
+                "li",
+                { className: "list-group-item" },
+                "Company: ",
                 this.props.bio.company
             ),
             this.props.bio.followers && React.createElement(
-                'li',
-                { className: 'list-group-item' },
-                'Followers: ',
+                "li",
+                { className: "list-group-item" },
+                "Followers: ",
                 this.props.bio.followers
             ),
             this.props.bio.following && React.createElement(
-                'li',
-                { className: 'list-group-item' },
-                'Following: ',
+                "li",
+                { className: "list-group-item" },
+                "Following: ",
                 this.props.bio.following
             ),
             this.props.bio.following && React.createElement(
-                'li',
-                { className: 'list-group-item' },
-                'Public Repos: ',
+                "li",
+                { className: "list-group-item" },
+                "Public Repos: ",
                 this.props.bio.public_repos
             ),
             this.props.bio.blog && React.createElement(
-                'li',
-                { className: 'list-group-item' },
-                'Blog: ',
+                "li",
+                { className: "list-group-item" },
+                "Blog: ",
                 React.createElement(
-                    'a',
+                    "a",
                     { href: this.props.bio.blog },
-                    ' ',
+                    " ",
                     this.props.bio.blog
                 )
             )
@@ -14414,24 +14413,34 @@ var Profile = React.createClass({
         return {
             notes: [1, 2, 3],
             bio: {},
-            repos: ['a', 'b', 'c']
+            repos: []
         };
     },
     // Ajax request 
+    // taking the username from the params itself
     componentDidMount: function componentDidMount() {
         this.ref = new Firebase('https://notes-cd9b3.firebaseio.com/');
-        var childRef = this.ref.child(this.props.params.username);
+        this.init(this.props.params.username);
+    },
+    // When this component receive new props
+    // And whenever react router changes its route
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        this.unbind('notes');
+        this.init(nextProps.params.username);
+    },
+    componentWillUnmount: function componentWillUnmount() {
+        this.unbind('notes');
+    },
+    init: function init(username) {
+        var childRef = this.ref.child(username);
         this.bindAsArray(childRef, 'notes');
 
-        helpers.getGithubInfo(this.props.params.username).then(function (data) {
+        helpers.getGithubInfo(username).then(function (data) {
             this.setState({
                 bio: data.bio,
                 repos: data.repos
             });
         }.bind(this));
-    },
-    componentWillUnmount: function componentWillUnmount() {
-        this.unbind('notes');
     },
     handleAddNote: function handleAddNote(newNote) {
         // update firebase with the newNote
@@ -14487,7 +14496,7 @@ var SearchGithub = React.createClass({
         var username = this.username.value;
         this.username.value = '';
         // PushState allows as to transtion to a new route
-        this.history.pushState(null, "profile/" + username);
+        this.history.pushState(null, "/profile/" + username);
     },
     render: function render() {
         return React.createElement(

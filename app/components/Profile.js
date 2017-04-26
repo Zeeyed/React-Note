@@ -14,25 +14,35 @@ var Profile = React.createClass({
         return{
             notes: [1, 2, 3],
             bio: {},
-            repos: ['a', 'b', 'c']
+            repos: []
         }
     },
     // Ajax request 
+    // taking the username from the params itself
     componentDidMount: function(){
         this.ref = new Firebase('https://notes-cd9b3.firebaseio.com/');
-        var childRef = this.ref.child(this.props.params.username);
+        this.init(this.props.params.username);
+    },
+    // When this component receive new props
+    // And whenever react router changes its route
+    componentWillReceiveProps: function(nextProps){
+        this.unbind('notes');
+        this.init(nextProps.params.username);
+    },
+    componentWillUnmount: function(){
+        this.unbind('notes');
+    },
+    init: function(username){
+         var childRef = this.ref.child(username);
         this.bindAsArray(childRef, 'notes');
 
-        helpers.getGithubInfo(this.props.params.username)
+        helpers.getGithubInfo(username)
             .then(function(data){
                 this.setState({
                     bio: data.bio,
                     repos: data.repos
                 })
             }.bind(this))
-    },
-    componentWillUnmount: function(){
-        this.unbind('notes');
     },
     handleAddNote : function(newNote){
         // update firebase with the newNote

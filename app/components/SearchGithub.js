@@ -10,7 +10,7 @@ var SearchGithub = React.createClass({
         var username = this.username.value;
         this.username.value = '';
         // PushState allows as to transtion to a new route
-        this.history.pushState(null, "profile/" + username);
+        this.history.pushState(null, "/profile/" + username);
     },
     render : function(){
         return (
