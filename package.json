@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/Zeeyed/React-Note#readme",
   "dependencies": {
-    "axios": "^0.8.0",
+    "axios": "^0.19.0",
     "firebase": "^2.3.2",
     "history": "^1.13.1",
     "re-base": "^1.5.1",
